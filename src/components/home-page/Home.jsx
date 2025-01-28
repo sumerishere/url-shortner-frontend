@@ -1,10 +1,15 @@
 import { useState } from 'react';
 
 const HomePage = () => {
+
   const [url, setUrl] = useState('');
   const [shortenedData, setShortenedData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Base URL for your backend
+  const BACKEND_BASE_URL = 'http://localhost:8080';
+  const SHORT_URL = "http://localhost:8080/url/redirect/";
 
   const handleSubmit = async () => {
     if (!url) {
@@ -16,13 +21,11 @@ const HomePage = () => {
     setError('');
 
     try {
-      // Replace this URL with your actual backend API endpoint
-      const response = await fetch('YOUR_BACKEND_API_URL', {
+      const response = await fetch(`${BACKEND_BASE_URL}/api/url/shorten?actualUrl=${encodeURIComponent(url)}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({ originalUrl: url }),
       });
 
       if (!response.ok) {
@@ -30,14 +33,23 @@ const HomePage = () => {
       }
 
       const data = await response.json();
-      setShortenedData(data);
+      
+      // Replace short.ly with your actual backend URL for the shortened link
+      const shortUrl = SHORT_URL+data.shortUrl;
+      console.log("get backend url",shortUrl);
+      
+      setShortenedData({
+        actualUrl: data.actualUrl,
+        shortUrl: shortUrl
+      });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to connect to the server');
     } finally {
       setLoading(false);
     }
   };
-
+  
+  // Rest of your component remains the same
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -96,7 +108,7 @@ const HomePage = () => {
             <div className="space-y-4">
               <div className="border-b border-gray-200 pb-4">
                 <p className="text-sm text-gray-500 mb-1">Original URL:</p>
-                <p className="text-gray-900 break-all">{shortenedData.originalUrl}</p>
+                <p className="text-gray-900 break-all">{shortenedData.actualUrl}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Shortened URL:</p>
