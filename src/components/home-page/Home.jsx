@@ -21,7 +21,7 @@ const HomePage = () => {
     setError('');
 
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}/api/url/shorten?actualUrl=${encodeURIComponent(url)}`, {
+      const response = await fetch(`${BACKEND_BASE_URL}/url/shorten?actualUrl=${encodeURIComponent(url)}`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
